@@ -8,10 +8,10 @@ class UI:
         self.scr = scr
         curses.curs_set(0)
         curses.start_color()
-        curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_BLUE)   # tiêu đề
-        curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)    # câu hỏi
-        curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)     # lỗi
-        curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_BLACK)   # thành công
+        curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_BLUE)   
+        curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)    
+        curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)    
+        curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_BLACK)   
         self.row = 0
 
     def title(self, text):
@@ -22,14 +22,14 @@ class UI:
 
     def line(self, text="", color=0):
         h, w = self.scr.getmaxyx()
-        if self.row >= h - 1:  # hết chỗ thì không in nữa
+        if self.row >= h - 1: 
             return
         self.scr.addstr(self.row, 2, text[:w - 4], curses.color_pair(color))
         self.row += 1
 
     def ask(self, prompt):
         h, w = self.scr.getmaxyx()
-        if self.row >= h - 1:  # hết chỗ thì xoá màn hình, in từ đầu
+        if self.row >= h - 1:
             self.title("")
         self.scr.addstr(self.row, 2, prompt, curses.color_pair(2))
         curses.echo()
@@ -81,7 +81,7 @@ class Classroom:
     def __init__(self):
         self.students = []
         self.courses = []
-        self.marks = {}          # marks[course_id][student_id] = mark
+        self.marks = {}         
 
     def inp_stu(self, ui):
         ui.title("INPUT STUDENTS")
@@ -117,7 +117,7 @@ class Classroom:
             return
         for s in self.students:
             mark = float(ui.ask(f"mark of {s.name}: "))
-            self.marks[course.id][s.id] = math.floor(mark * 10) / 10   # round-down 1 chữ số lẻ
+            self.marks[course.id][s.id] = math.floor(mark * 10) / 10  
         ui.line("Marks saved!", 4)
         ui.wait()
 
@@ -146,7 +146,6 @@ class Classroom:
             ui.line(f"{s.name}: {self.marks[course.id].get(s.id, 'N/A')}")
         ui.wait()
 
-    # ---------- GPA + sort (numpy) ----------
     def gpa(self, student):
         marks, credits = [], []
         for c in self.courses:
@@ -161,7 +160,7 @@ class Classroom:
 
     def sort_by_gpa(self, ui):
         gpas = np.array([self.gpa(s) for s in self.students])
-        self.students = [self.students[i] for i in np.argsort(-gpas)]   # giảm dần
+        self.students = [self.students[i] for i in np.argsort(-gpas)]   
         ui.title("STUDENTS SORTED BY GPA (DESC)")
         for s in self.students:
             ui.line(f"{s.name}: {self.gpa(s):.1f}")
